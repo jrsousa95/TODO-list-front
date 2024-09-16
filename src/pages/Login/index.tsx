@@ -1,3 +1,13 @@
+import {
+  Button,
+  Container,
+  FormControl,
+  FormLabel,
+  Input,
+  Text,
+  useToast,
+  VStack,
+} from "@chakra-ui/react";
 import { ChangeEvent, FormEvent, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/Auth/AuthContext";
@@ -11,6 +21,9 @@ export function Login() {
   const [userData, setUserData] = useState(initialState);
 
   const auth = useContext(AuthContext);
+
+  const toast = useToast();
+
   const navigate = useNavigate();
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
@@ -19,72 +32,79 @@ export function Login() {
     setUserData({ ...userData, [name]: value });
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
-    if (userData.email && userData.password) {
-      const isLogger = await auth.signIn(userData.email, userData.password);
-      if (isLogger) {
-        navigate("/");
-      } else {
-        alert("Não deu certo");
-      }
+    try {
+      await auth.signIn(userData.email, userData.password);
+
+      navigate("/tasks");
+    } catch (error) {
+      toast({
+        title: "Email ou senha inválidos",
+        description: `${error}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
+    <Container maxW="container.md">
+      <VStack
+        as="form"
+        gap="10px"
+        height="100vh"
+        justifyContent="center"
+        onSubmit={handleSubmit}
       >
-        <h2>TO-DO List</h2>
+        <FormControl>
+          <FormLabel>Email</FormLabel>
+          <Input
+            type="email"
+            name="email"
+            value={userData.email}
+            placeholder="Digite seu email"
+            onChange={handleChange}
+            isRequired
+          />
+        </FormControl>
 
-        <span style={{ fontSize: "16px" }}>Email</span>
-        <input
-          type="email"
-          name="email"
-          value={userData.email}
-          placeholder="Digite seu email"
-          onChange={handleChange}
-          className="input"
-          required
-        />
+        <FormControl>
+          <FormLabel>Senha</FormLabel>
+          <Input
+            type="password"
+            name="password"
+            value={userData.password}
+            placeholder="Digite sua senha"
+            onChange={handleChange}
+            isRequired
+          />
+        </FormControl>
 
-        <span style={{ fontSize: "16px" }}>Senha</span>
-        <input
-          type="password"
-          name="password"
-          value={userData.password}
-          placeholder="Digite sua senha"
-          onChange={handleChange}
-          className="input"
-          required
-        />
+        <Button type="submit" colorScheme="blue" width="full">
+          Entrar
+        </Button>
 
-        <button type="submit">Entrar</button>
-
-        <span>
+        <Text>
           Não tem conta?{" "}
-          <span
+          <Text
+            as="span"
             style={{ textDecoration: "underline", cursor: "pointer" }}
-            onClick={() => navigate("/sign-up")}
+            onClick={() => navigate("/register")}
           >
             Cadastrar
-          </span>
-        </span>
+          </Text>
+        </Text>
 
-        <span
+        <Text
           style={{ textDecoration: "underline", cursor: "pointer" }}
           onClick={() => navigate("/")}
         >
           Voltar
-        </span>
-      </div>
-    </form>
+        </Text>
+      </VStack>
+    </Container>
   );
 }

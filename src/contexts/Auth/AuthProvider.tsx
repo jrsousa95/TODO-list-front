@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { userApi } from "../../hooks/userApi";
 import { User } from "../../types/User";
 import { AuthContext } from "./AuthContext";
@@ -7,30 +7,42 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
   const [user, setUser] = useState<User | null>(null);
   const api = userApi();
 
-  useEffect(() => {
-    const validateToken = async () => {
-      const storageData = localStorage.getItem("AUTH_TOKEN");
+  // useEffect(() => {
+  //   const validateToken = async () => {
+  //     const storageData = localStorage.getItem("AUTH_TOKEN");
 
-      if (storageData) {
-        const data = await api.validateToken(storageData);
+  //     if (storageData) {
+  //       try {
+  //         await api.validateToken(storageData);
+  //       } catch (error) {
+  //         localStorage.removeItem("AUTH_TOKEN");
 
-        if (data.user) {
-          setUser(data.user);
-        }
-      }
-    };
-    validateToken();
-  }, [api]);
+  //         setUser(null);
+
+  //         toast({
+  //           title: "Token inválido",
+  //           description: `${error}`,
+  //           status: "error",
+  //           duration: 3000,
+  //           isClosable: true,
+  //         });
+  //       }
+  //     }
+  //   };
+  //   validateToken();
+  // }, [api, toast]);
 
   const signIn = async (email: string, password: string) => {
-    const data = await api.login(email, password);
+    const { user } = await api.login(email, password);
 
-    console.log(data);
+    if (user) {
+      setUser({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      });
 
-    if (data.token) {
-      localStorage.setItem("AUTH_TOKEN", data.token);
-      // setUser(data.user);
-      setToken(data.token);
+      setToken(user.token);
       return true;
     }
 

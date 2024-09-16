@@ -1,31 +1,97 @@
+import {
+  Button,
+  Container,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  useToast,
+  VStack,
+} from "@chakra-ui/react";
+import { ChangeEvent, FormEvent, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { userApi } from "../../hooks/userApi";
+
+const initialState = {
+  name: "",
+  email: "",
+  password: "",
+};
+
 export function Register() {
+  const [userData, setUserData] = useState(initialState);
+  const api = userApi();
+  const toast = useToast();
+  const navigate = useNavigate();
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    const { name, value } = event.target;
+
+    setUserData({ ...userData, [name]: value });
+  }
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+
+    try {
+      await api.register(userData.name, userData.email, userData.password);
+      navigate("/tasks");
+    } catch (error) {
+      toast({
+        title: "Erro ao cadastrar",
+        description: `${error}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }
   return (
-    <>
-      <h1>Cadastro</h1>
+    <Container maxW="container.md">
+      <VStack
+        as="form"
+        gap="10px"
+        height="100vh"
+        justifyContent="center"
+        onSubmit={handleSubmit}
+      >
+        <Heading>Cadastro</Heading>
+        <FormControl>
+          <FormLabel>Nome</FormLabel>
+          <Input
+            type="text"
+            name="name"
+            value={userData.name}
+            onChange={handleChange}
+            isRequired
+          />
+        </FormControl>
 
-      <form>
-        <div>
-          <label>Nome</label>
-          <input type="text" name="name" required />
-        </div>
+        <FormControl>
+          <FormLabel>Email</FormLabel>
+          <Input
+            type="email"
+            name="email"
+            value={userData.email}
+            onChange={handleChange}
+            isRequired
+          />
+        </FormControl>
 
-        <div>
-          <label>Email</label>
-          <input type="email" name="email" required />
-        </div>
+        <FormControl>
+          <FormLabel>Senha</FormLabel>
+          <Input
+            type="password"
+            name="password"
+            value={userData.password}
+            onChange={handleChange}
+            isRequired
+          />
+        </FormControl>
 
-        <div>
-          <label>Senha</label>
-          <input type="password" name="password" required />
-        </div>
-
-        <div>
-          <label>Confirmar senha</label>
-          <input type="password" name="confirmPassword" required />
-        </div>
-
-        <button type="submit">Cadastrar</button>
-      </form>
-    </>
+        <Button colorScheme="blue" type="submit" width="full">
+          Cadastrar
+        </Button>
+      </VStack>
+    </Container>
   );
 }
