@@ -3,6 +3,7 @@ import {
   Container,
   FormControl,
   FormLabel,
+  Heading,
   Input,
   Text,
   useToast,
@@ -59,6 +60,8 @@ export function Login() {
         justifyContent="center"
         onSubmit={handleSubmit}
       >
+        <Heading>Login</Heading>
+
         <FormControl>
           <FormLabel>Email</FormLabel>
           <Input

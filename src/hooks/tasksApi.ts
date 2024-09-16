@@ -20,8 +20,11 @@ export const taskApi = () => ({
     return getTasks;
   },
 
-  updateTask: async (id: number, title: string) => {
-    const { data: updateTask } = await api.put(`/tasks/${id}`, { title });
+  updateTask: async (id: number, title?: string, completed?: boolean) => {
+    const { data: updateTask } = await api.put(`/tasks/${id}`, {
+      title,
+      completed,
+    });
 
     return updateTask;
   },

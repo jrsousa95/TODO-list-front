@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { userApi } from "../../hooks/userApi";
 import { User } from "../../types/User";
 import { AuthContext } from "./AuthContext";
@@ -7,30 +7,19 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
   const [user, setUser] = useState<User | null>(null);
   const api = userApi();
 
-  // useEffect(() => {
-  //   const validateToken = async () => {
-  //     const storageData = localStorage.getItem("AUTH_TOKEN");
+  useEffect(() => {
+    const verifyToken = async () => {
+      const authToken = localStorage.getItem("AUTH_TOKEN");
 
-  //     if (storageData) {
-  //       try {
-  //         await api.validateToken(storageData);
-  //       } catch (error) {
-  //         localStorage.removeItem("AUTH_TOKEN");
+      const routes = ["/register", "/login", "/"];
 
-  //         setUser(null);
+      if (!authToken && !routes.includes(window.location.pathname)) {
+        window.location.href = "/login";
+      }
+    };
 
-  //         toast({
-  //           title: "Token inválido",
-  //           description: `${error}`,
-  //           status: "error",
-  //           duration: 3000,
-  //           isClosable: true,
-  //         });
-  //       }
-  //     }
-  //   };
-  //   validateToken();
-  // }, [api, toast]);
+    verifyToken();
+  }, []);
 
   const signIn = async (email: string, password: string) => {
     const { user } = await api.login(email, password);

@@ -34,7 +34,16 @@ export function Register() {
 
     try {
       await api.register(userData.name, userData.email, userData.password);
-      navigate("/tasks");
+
+      toast({
+        title: "Cadastrado com sucesso",
+        description: "Agora realize seu login",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      navigate("/login");
     } catch (error) {
       toast({
         title: "Erro ao cadastrar",
