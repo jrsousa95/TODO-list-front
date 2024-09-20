@@ -8,7 +8,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userApi } from "../../hooks/userApi";
 
@@ -23,6 +23,20 @@ export function Register() {
   const api = userApi();
   const toast = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("AUTH_TOKEN")) {
+      toast({
+        title: "Login realizado",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      navigate("/tasks");
+    }
+  }, [navigate, toast]);
+
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
 
@@ -45,9 +59,9 @@ export function Register() {
 
       navigate("/login");
     } catch (error) {
+      console.error(error);
       toast({
         title: "Erro ao cadastrar",
-        description: `${error}`,
         status: "error",
         duration: 3000,
         isClosable: true,

@@ -94,9 +94,10 @@ export function Tasks() {
 
       fetchTasks();
     } catch (error) {
+      console.error(error);
+
       toast({
         title: "Erro ao atualizar tarefa",
-        description: `${error}`,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -120,9 +121,9 @@ export function Tasks() {
         onCloseConfirmDelete();
       }
     } catch (error) {
+      console.error(error);
       toast({
         title: "Erro ao deletar tarefa",
-        description: `${error}`,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -146,9 +147,9 @@ export function Tasks() {
         isClosable: true,
       });
     } catch (error) {
+      console.error(error);
       toast({
         title: "Erro ao criar tarefa",
-        description: `${error}`,
         status: "error",
         duration: 3000,
         isClosable: true,

@@ -9,7 +9,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { ChangeEvent, FormEvent, useContext, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/Auth/AuthContext";
 
@@ -27,6 +27,19 @@ export function Login() {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (localStorage.getItem("AUTH_TOKEN")) {
+      toast({
+        title: "Login realizado",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      navigate("/tasks");
+    }
+  }, [navigate, toast]);
+
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
 
@@ -41,9 +54,9 @@ export function Login() {
 
       navigate("/tasks");
     } catch (error) {
+      console.error(error);
       toast({
         title: "Email ou senha inválidos",
-        description: `${error}`,
         status: "error",
         duration: 3000,
         isClosable: true,
