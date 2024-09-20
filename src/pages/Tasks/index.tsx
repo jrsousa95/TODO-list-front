@@ -86,7 +86,7 @@ export function Tasks() {
       await taskAPI.updateTask(id, task.title, !task.completed);
 
       toast({
-        title: "Tarefa concluída",
+        title: "Tarefa atualizada",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -183,7 +183,9 @@ export function Tasks() {
               <Card
                 width="full"
                 key={task.id}
-                border={task.completed ? "1px solid green" : "1px solid gray"}
+                border={
+                  task.completed ? "2px solid #12a212" : "2px solid #DCDCDC"
+                }
               >
                 <CardHeader>
                   <HStack justifyContent="space-between">
